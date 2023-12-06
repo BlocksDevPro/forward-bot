@@ -1,10 +1,12 @@
-const { Client } = require("whatsapp-web.js");
+const { Client, LocalAuth } = require("whatsapp-web.js");
 const qrcode = require("qrcode-terminal");
 const express = require("express");
 const bodyParser = require("body-parser");
 
 const app = express();
-const client = new Client();
+const client = new Client({
+  authStrategy: new LocalAuth(),
+});
 
 app.use(bodyParser.json());
 
@@ -15,6 +17,12 @@ client.on("qr", (qrCode) => {
 
 client.on("ready", () => {
   console.log("Client is ready!");
+});
+
+client.on("message", (message) => {
+  if (message.body === "!ping") {
+    client.sendMessage(message.from, "pong"); // Reply without quoting
+  }
 });
 
 app.post("/sendMessage", (req, res) => {
@@ -35,6 +43,20 @@ app.post("/sendMessage", (req, res) => {
     const response_data = { success: false, message: error.text };
     return res.json(response_data);
   }
+});
+
+app.get("/chats", (req, res) => {
+  client.getChats().then((chats) => {
+    const groupInfoArray = [];
+
+    chats.forEach((chat) => {
+      if (chat.isGroup) {
+        groupInfoArray.push({ name: chat.name, id: chat.id._serialized });
+      }
+    });
+
+    res.json(groupInfoArray);
+  });
 });
 
 app.listen(3000, () => {
