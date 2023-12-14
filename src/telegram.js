@@ -3,7 +3,7 @@ const { client } = require("./whatsapp");
 const { Telegraf } = require("telegraf");
 const { MessageMedia } = require("whatsapp-web.js");
 
-const bot = new Telegraf("6517673520:AAEAFDQoE5jeAUsDSBs6xA1MPgCBnNInYHM");
+const bot = new Telegraf(config.telegramBotToken);
 
 async function handleChannelPost(ctx) {
   try {
