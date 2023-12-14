@@ -1,0 +1,9 @@
+{
+    "apps": [
+        {
+            "name": "forward-bot",
+            "script": "npm",
+            "args" : "start"
+        }
+    ]
+}
